@@ -2,7 +2,8 @@
 #include <string>
 
 using namespace std;
-
+//TO DO VISE PREVODA JEDNE RECI
+//MENI, BRISANJE CELOG STABLA, UBACIVANJE POSTOJECEG KAO SLEDBENIKA, ISPIS
 struct TreeNode {
 	string key;
 	string translation;
@@ -118,9 +119,26 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 
 }
 
+struct TreeNode* create_tree(struct TreeNode* root) {
+	cout << "Za prekid unosa unesite 0 i 0\n";
+	while (1) {
+		cout << "Unesite kljuc i prevod: ";
+		string k, t;
+		cin >> k >> t;
+		cout << endl;
+		if (k == "0" && t == "0")break;
+		struct TreeNode* newnode = create_tree_node(k, t);
+		root = bst_insert(root, newnode);
+	}
+	return root;
+}
+
 int main() {
 	struct TreeNode* root = nullptr;
-	struct TreeNode* newnode = create_tree_node("b", "klk");
+	root = create_tree(root);
+	root = bst_delete_node(root, "jeka");
+	struct TreeNode* find = bst_search(root, "kola");
+	/*struct TreeNode* newnode = create_tree_node("b", "klk");
 
 	root = bst_insert(root, newnode);
 	struct TreeNode* newnode2 = create_tree_node("a", "klk");
@@ -128,5 +146,8 @@ int main() {
 
 	cout << "tree:" << root->left->key << endl;
 	root = bst_delete_node(root, "b");
-	cout << "tree:" << root->key;
+	cout << "tree:" << root->key;*/
+	if (find != nullptr) { cout << find->translation; }
+	else { cout << "Nema ga"; }
+	
 }
