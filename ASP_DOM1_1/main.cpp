@@ -4,7 +4,7 @@
 
 
 using namespace std;
-//MENI, ISPIS, brisanje svih istih kljuceva, pretraga na zadatu rec?
+//MENI, ISPIS
 struct TreeNode {
 	string key;
 	vector<string> translation;;
@@ -116,7 +116,7 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 		}
 	}
 	if (p == nullptr) {
-		//TO DO KADA NEMA KLJUCA
+		return root;
 	}
 	if (p->left == nullptr) {
 		rp = p->right;
@@ -146,6 +146,9 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 	}
 	else if (p == q->left) {
 		q->left = rp;
+	}
+	else {
+		q->right = rp;
 	}
 	delete p;
 
@@ -197,12 +200,23 @@ struct TreeNode* delete_all_same_keys(struct TreeNode* root, string key) {
 	return root;
 }
 
+void find_all_keys(struct TreeNode* root, string key) {
+	struct TreeNode* p = root, *find;
+	while ((find = bst_search(p, key)) != nullptr) {
+		for (int i = 0; i < find->translation.size(); i++) {
+			cout << find->translation[i] << " ";
+		}
+		p = bst_succ(find);
+	}
+}
+
 int main() {
 	struct TreeNode* root = nullptr;
 	root = create_tree(root);
 	//root = bst_delete_node(root, "jeka");
 	//root = delete_all_same_keys(root, "jeka");
-	struct TreeNode* find = bst_search(root, "jeka");
+	//struct TreeNode* find = bst_search(root, "jeka");
+	find_all_keys(root, "jeka");
 	//struct TreeNode* suc = bst_succ(find);
 	/*struct TreeNode* newnode = create_tree_node("b", "klk");
 
@@ -213,13 +227,13 @@ int main() {
 	cout << "tree:" << root->left->key << endl;
 	root = bst_delete_node(root, "b");
 	cout << "tree:" << root->key;*/
-	if (find != nullptr) {
-		for (int i = 0; i < find->translation.size(); i++) {
-			cout << find->translation[i] << " ";
-		}
+	//if (find != nullptr) {
+		//for (int i = 0; i < find->translation.size(); i++) {
+			//cout << find->translation[i] << " ";
+		//}
 		
-	}
-	else { cout << "Nema ga"; }
+	//}
+	//else { cout << "Nema ga"; }
 
 	delete_bst(root);
 	
