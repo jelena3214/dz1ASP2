@@ -4,7 +4,7 @@
 
 
 using namespace std;
-//MENI, ISPIS
+//MENI, ISPIS, brisanje svih istih kljuceva, pretraga na zadatu rec?
 struct TreeNode {
 	string key;
 	vector<string> translation;;
@@ -54,13 +54,17 @@ struct TreeNode* bst_insert(struct TreeNode* root, struct TreeNode* newnode) {
 		if (newnode->key == tmp->key) {
 			struct TreeNode* succ = bst_succ(tmp);
 			struct TreeNode* parsucc = succ->parent;
-			if (parsucc == succ->right) {
+			if (succ == parsucc->right) {
 				parsucc->right = newnode;
 			}
-			else if (parsucc == succ->left) {
+			else if (succ == parsucc->left) {
 				parsucc->left = newnode;
 			}
-			newnode->right = tmp;
+			newnode->parent = parsucc;
+			succ->parent = newnode;
+			newnode->right = succ;
+			
+			return root;
 		}
 		else if (newnode->key < tmp->key) {//idemo u levo podstablo
 			tmp = tmp->left;
@@ -186,12 +190,20 @@ void delete_bst(struct TreeNode* root) {
 	delete root;
 }
 
+struct TreeNode* delete_all_same_keys(struct TreeNode* root, string key) {
+	while (bst_search(root, key) != nullptr) {
+		root = bst_delete_node(root, key);
+	}
+	return root;
+}
+
 int main() {
 	struct TreeNode* root = nullptr;
 	root = create_tree(root);
 	//root = bst_delete_node(root, "jeka");
+	//root = delete_all_same_keys(root, "jeka");
 	struct TreeNode* find = bst_search(root, "jeka");
-	struct TreeNode* suc = bst_succ(find);
+	//struct TreeNode* suc = bst_succ(find);
 	/*struct TreeNode* newnode = create_tree_node("b", "klk");
 
 	root = bst_insert(root, newnode);
