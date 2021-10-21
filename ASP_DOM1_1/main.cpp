@@ -1,18 +1,20 @@
 #include <iostream>
 #include <string>
+#include <vector>
+
 
 using namespace std;
-//TO DO VISE PREVODA JEDNE RECI
-//MENI, BRISANJE CELOG STABLA, UBACIVANJE POSTOJECEG KAO SLEDBENIKA, ISPIS
+//MENI, ISPIS
 struct TreeNode {
 	string key;
-	string translation;
+	vector<string> translation;;
+	int n;
 	TreeNode* left;
 	TreeNode* right;
 	TreeNode* parent;
 };
 
-struct TreeNode* create_tree_node(string key, string translation) {
+struct TreeNode* create_tree_node(string key, vector<string> translation) {
 	struct TreeNode* newkey = new TreeNode;
 	newkey->key = key;
 	newkey->translation = translation;
@@ -23,6 +25,26 @@ struct TreeNode* create_tree_node(string key, string translation) {
 	return newkey;
 }
 
+struct TreeNode* bst_succ(struct TreeNode* node) {
+	struct TreeNode* p = node;
+	struct TreeNode* q = nullptr;
+	if (p->right != nullptr) {
+		p = p->right;
+		while (p->left != nullptr) {
+			p = p->left;
+		}
+		return p;
+	}
+	else {
+		q = p->parent;
+		while (q != nullptr && p == q->right) {
+			p = q;
+			q = q->parent;
+		}
+	}
+	return q;
+}
+
 struct TreeNode* bst_insert(struct TreeNode* root, struct TreeNode* newnode) {
 	struct TreeNode* tmp = root;
 	struct TreeNode* par = nullptr;
@@ -30,7 +52,15 @@ struct TreeNode* bst_insert(struct TreeNode* root, struct TreeNode* newnode) {
 	while (tmp != nullptr) {
 		par = tmp;
 		if (newnode->key == tmp->key) {
-			//TODO
+			struct TreeNode* succ = bst_succ(tmp);
+			struct TreeNode* parsucc = succ->parent;
+			if (parsucc == succ->right) {
+				parsucc->right = newnode;
+			}
+			else if (parsucc == succ->left) {
+				parsucc->left = newnode;
+			}
+			newnode->right = tmp;
 		}
 		else if (newnode->key < tmp->key) {//idemo u levo podstablo
 			tmp = tmp->left;
@@ -120,24 +150,48 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 }
 
 struct TreeNode* create_tree(struct TreeNode* root) {
-	cout << "Za prekid unosa unesite 0 i 0\n";
+	cout << "Za prekid unosa unesite 0\n";
 	while (1) {
-		cout << "Unesite kljuc i prevod: ";
-		string k, t;
-		cin >> k >> t;
+		cout << "Unesite kljuc ";
+		string k;
+		cin >> k;
 		cout << endl;
-		if (k == "0" && t == "0")break;
+		if (k == "0")break;
+		cout << "Unosite prevod(e): ";
+		
+		vector<string> t;
+		string input;
+
+		cout << "Za prekid unosa unesite 0\n";
+		cin >> input;
+
+		while (input != "0")
+		{
+			t.push_back(input);
+			cin >> input;
+		}
+
 		struct TreeNode* newnode = create_tree_node(k, t);
 		root = bst_insert(root, newnode);
 	}
 	return root;
 }
 
+void delete_bst(struct TreeNode* root) {
+	if (root == nullptr) return;
+
+	delete_bst(root->left);
+	delete_bst(root->right);
+
+	delete root;
+}
+
 int main() {
 	struct TreeNode* root = nullptr;
 	root = create_tree(root);
-	root = bst_delete_node(root, "jeka");
-	struct TreeNode* find = bst_search(root, "kola");
+	//root = bst_delete_node(root, "jeka");
+	struct TreeNode* find = bst_search(root, "jeka");
+	struct TreeNode* suc = bst_succ(find);
 	/*struct TreeNode* newnode = create_tree_node("b", "klk");
 
 	root = bst_insert(root, newnode);
@@ -147,7 +201,14 @@ int main() {
 	cout << "tree:" << root->left->key << endl;
 	root = bst_delete_node(root, "b");
 	cout << "tree:" << root->key;*/
-	if (find != nullptr) { cout << find->translation; }
+	if (find != nullptr) {
+		for (int i = 0; i < find->translation.size(); i++) {
+			cout << find->translation[i] << " ";
+		}
+		
+	}
 	else { cout << "Nema ga"; }
+
+	delete_bst(root);
 	
 }
