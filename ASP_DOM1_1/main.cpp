@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stack>
 
 
 using namespace std;
+
 //MENI, ISPIS
 struct TreeNode {
 	string key;
@@ -207,6 +209,43 @@ void find_all_keys(struct TreeNode* root, string key) {
 			cout << find->translation[i] << " ";
 		}
 		p = bst_succ(find);
+	}
+}
+
+void stack_test(struct TreeNode *root) {
+	stack<struct TreeNode*> stack;
+	struct TreeNode* p = root,*old;
+	while (p->left != nullptr) {
+		if (p->right != nullptr) {
+			stack.push(p->right);
+		}
+		old = p;
+		p = p->left;
+		delete old;
+	}//roditelji?
+
+	while (!stack.empty()) {
+		struct TreeNode* q = stack.top();
+		stack.pop();
+		while (q->left != nullptr) {
+			if (q->right != nullptr) {
+				stack.push(q->right);
+			}
+			old = q;
+			q = q->left;
+			delete old;
+		}
+		if (q->left == nullptr) {
+			if (q->right != nullptr) {
+				stack.push(q->right);
+			}
+			old = q;
+			q = q->left;
+			delete old;
+		}
+		else if (q->left == nullptr && q->right == nullptr) {
+			delete q;
+		}
 	}
 }
 
