@@ -2,15 +2,14 @@
 #include <string>
 #include <vector>
 #include <stack>
-
+#include <queue>
 
 using namespace std;
-
-//ISPIS //odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca? datoteka
+//proveri brisanje sa stekom
+//odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca? datoteka
 struct TreeNode {
 	string key;
-	vector<string> translation;;
-	int n;
+	vector<string> translation;
 	TreeNode* left;
 	TreeNode* right;
 	TreeNode* parent;
@@ -249,6 +248,51 @@ void stack_test(struct TreeNode *root) {
 	}
 }
 
+int subtreeHeight(struct TreeNode *node) {
+	if (!node)      return -1;
+	return 1 + max(subtreeHeight(node->left), subtreeHeight(node->right));
+}
+
+int treeHeight(struct TreeNode *root) {
+	if (!root) return -1;
+	return subtreeHeight(root);
+}
+
+void printTree(struct TreeNode* root) {
+	if (root == nullptr)  return;
+	else {
+		queue<struct TreeNode*> q;
+		int i, line_len = 62;
+		int first_skip = line_len, in_between_skip;
+
+		q.push(root);
+		for (i = 0; i <= treeHeight(root); i++) {
+			int j = 1 << i, k, l;
+			in_between_skip = first_skip;
+			first_skip = (first_skip - 2) / 2;
+			for (k = 0; k < first_skip; k++) putchar(' ');
+			for (k = 0; k < j; k++) {
+				struct TreeNode* btn = q.front();
+				q.pop();
+				if (btn) {
+					q.push(btn->left);
+					q.push(btn->right);
+				}
+				else {
+					q.push(nullptr);
+					q.push(nullptr);
+				}
+				if (btn)  cout << btn->key;
+				else      cout << " ";
+				for (l = 0; l < in_between_skip; l++) putchar(' ');
+			}
+			putchar('\n');
+			putchar('\n');
+		}
+	}
+}
+
+
 int main() {
 	string meni = "Unesite neku od opcija:\n"
 		"1. Formiranje stabla\n"
@@ -300,10 +344,11 @@ int main() {
 			root = delete_all_same_keys(root, word);
 		}
 		if (choice == 5) {
-			delete_bst(root);
+			stack_test(root);
+			root = nullptr;
 		}
 		if (choice == 6) {
-			cout << "Ispis";
+			printTree(root);
 		}
 		if (choice == 7) {
 			cout << "Kraj";
