@@ -6,7 +6,7 @@
 
 using namespace std;
 
-//MENI, ISPIS
+//ISPIS //odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca? datoteka
 struct TreeNode {
 	string key;
 	vector<string> translation;;
@@ -250,30 +250,65 @@ void stack_test(struct TreeNode *root) {
 }
 
 int main() {
+	string meni = "Unesite neku od opcija:\n"
+		"1. Formiranje stabla\n"
+		"2. Pretraga stabla na zadatu rec i dohvatanje prevoda\n"
+		"3. Umetanje novog cvora\n"
+		"4. Brisanje zadatog kljuca\n"
+		"5. Brisanje stabla\n"
+		"6. Ispis stabla\n"
+		"7. Prekid programa\n";
+
 	struct TreeNode* root = nullptr;
-	root = create_tree(root);
-	//root = bst_delete_node(root, "jeka");
-	//root = delete_all_same_keys(root, "jeka");
-	//struct TreeNode* find = bst_search(root, "jeka");
-	find_all_keys(root, "jeka");
-	//struct TreeNode* suc = bst_succ(find);
-	/*struct TreeNode* newnode = create_tree_node("b", "klk");
-
-	root = bst_insert(root, newnode);
-	struct TreeNode* newnode2 = create_tree_node("a", "klk");
-	root = bst_insert(root, newnode2);
-
-	cout << "tree:" << root->left->key << endl;
-	root = bst_delete_node(root, "b");
-	cout << "tree:" << root->key;*/
-	//if (find != nullptr) {
-		//for (int i = 0; i < find->translation.size(); i++) {
-			//cout << find->translation[i] << " ";
-		//}
+	int choice;
+	while (true) {
+		cout << meni;
+		cin >> choice;
+		string word, k , input;
+		vector<string> t;
 		
-	//}
-	//else { cout << "Nema ga"; }
+		if (choice == 1) {
+			root = create_tree(root);
+		}
+		if (choice == 2) {
+			cout << "Unesite kljuc: ";
+			cin >> word;
+			find_all_keys(root, word);
+		}
+		if (choice == 3) {
+			cout << "Unesite kljuc ";
+			cin >> k;
+			cout << endl;
+			if (k == "0")break;
+			cout << "Unosite prevod(e): ";
 
-	delete_bst(root);
-	
+			cout << "Za prekid unosa unesite 0\n";
+			cin >> input;
+
+			while (input != "0")
+			{
+				t.push_back(input);
+				cin >> input;
+			}
+
+			struct TreeNode* newnode = create_tree_node(k, t);
+			root = bst_insert(root, newnode);
+		}
+		if (choice == 4) {
+			cout << "Unesite kljuc koji zelite da obrisete: ";
+			cin >> word;
+			root = delete_all_same_keys(root, word);
+		}
+		if (choice == 5) {
+			delete_bst(root);
+		}
+		if (choice == 6) {
+			cout << "Ispis";
+		}
+		if (choice == 7) {
+			cout << "Kraj";
+			exit(0);
+		}
+	}
+
 }
