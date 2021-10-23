@@ -4,6 +4,7 @@
 #include <stack>
 #include <queue>
 
+
 using namespace std;
 //proveri brisanje sa stekom
 //odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca?
@@ -303,6 +304,43 @@ void printTree(struct TreeNode* root) {
 	}
 }
 
+void inorder(struct TreeNode* root, vector<string> *all_keys) {
+	if (root == nullptr)return;
+	inorder(root->left, all_keys);
+	all_keys->push_back(root->key);
+	inorder(root->right, all_keys);
+}
+
+string max_trans(struct TreeNode* root, vector<string> keys) {
+	struct TreeNode* p = root, * find;
+	string max, key;
+	int len = 0, maxlen = 0;
+	vector<string> tmp;
+	while (!keys.empty()) {
+		key = keys.front();
+		keys.erase(keys.begin());
+
+		while ((find = bst_search(p, key)) != nullptr) {
+			for (int i = 0; i < find->translation.size(); i++) {
+				tmp.push_back(find->translation[i]);
+			}
+			p = bst_succ(find);
+			//if (p == nullptr)break;
+			if ((p == nullptr) || (p->key != key))break;
+		}
+		sort(tmp.begin(), tmp.end());
+		auto last = unique(tmp.begin(), tmp.end());
+		tmp.erase(last, tmp.end());
+		len = tmp.size();
+		
+		if (len > maxlen) {
+			maxlen = len;
+			max = key;
+		}
+		tmp.clear();
+	}
+	return max;
+}
 
 int main() {
 	string meni = "Unesite neku od opcija:\n"
@@ -312,7 +350,10 @@ int main() {
 		"4. Brisanje zadatog kljuca\n"
 		"5. Brisanje stabla\n"
 		"6. Ispis stabla\n"
-		"7. Prekid programa\n";
+		"7. Kljuc sa najvise razlicitih prevoda\n"
+		"8. Kraj programa\n";
+
+	vector<string> *all_keys = new vector<string>;
 
 	struct TreeNode* root = nullptr;
 	int choice;
@@ -362,7 +403,21 @@ int main() {
 			printTree(root);
 		}
 		if (choice == 7) {
-			cout << "Kraj";
+			inorder(root, all_keys);
+			sort(all_keys->begin(), all_keys->end());
+			auto last = unique(all_keys->begin(), all_keys->end());
+			all_keys->erase(last, all_keys->end());
+
+			//for (int i = 0; i < all_keys->size(); i++) {
+				//cout << (*all_keys)[i] << " ";
+			//}
+
+			cout << max_trans(root, *all_keys);
+
+			all_keys->clear();
+		}
+		if (choice == 8) {
+			cout << "Kraj programa";
 			exit(0);
 		}
 	}
