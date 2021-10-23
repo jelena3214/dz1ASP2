@@ -6,7 +6,7 @@
 
 using namespace std;
 //proveri brisanje sa stekom
-//odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca? datoteka
+//odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca?
 struct TreeNode {
 	string key;
 	vector<string> translation;
@@ -55,6 +55,11 @@ struct TreeNode* bst_insert(struct TreeNode* root, struct TreeNode* newnode) {
 		if (newnode->key == tmp->key) {
 			struct TreeNode* succ = bst_succ(tmp);
 			struct TreeNode* parsucc = succ->parent;
+			if (!parsucc && tmp->right == nullptr) {
+				tmp->right = newnode;
+				newnode->parent = tmp;
+				return root;
+			}
 			if (succ == parsucc->right) {
 				parsucc->right = newnode;
 			}
@@ -128,7 +133,7 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 	else {
 		struct TreeNode* f = p;
 		rp = p->right;
-		struct TreeNode* lp = p->left;
+		struct TreeNode* lp = rp->left;
 
 		while (lp != nullptr) {
 			f = rp;
@@ -136,10 +141,13 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 			lp = lp->left;
 		}
 		if (f != p) {
-			f->left = p->right;
+			f->left = rp->right;
+			if(rp->right)rp->right->parent = f;
 			rp->right = p->right;
+			if(p->right)p->right->parent = rp;
 		}
 		rp->left = p->left;
+		if(p->left)p->left->parent = rp;
 	}
 
 	if (q == nullptr) {
@@ -147,9 +155,11 @@ struct TreeNode* bst_delete_node(struct TreeNode* root, string key) {
 	}
 	else if (p == q->left) {
 		q->left = rp;
+		if(rp)rp->parent = q;
 	}
 	else {
 		q->right = rp;
+		if(rp) rp->parent = q;
 	}
 	delete p;
 
@@ -208,6 +218,7 @@ void find_all_keys(struct TreeNode* root, string key) {
 			cout << find->translation[i] << " ";
 		}
 		p = bst_succ(find);
+		if (p->key != key)return;
 	}
 }
 
@@ -270,7 +281,7 @@ void printTree(struct TreeNode* root) {
 			int j = 1 << i, k, l;
 			in_between_skip = first_skip;
 			first_skip = (first_skip - 2) / 2;
-			for (k = 0; k < first_skip; k++) putchar(' ');
+			for (k = 0; k < first_skip; k++) cout << "  ";
 			for (k = 0; k < j; k++) {
 				struct TreeNode* btn = q.front();
 				q.pop();
@@ -279,15 +290,15 @@ void printTree(struct TreeNode* root) {
 					q.push(btn->right);
 				}
 				else {
-					q.push(nullptr);
-					q.push(nullptr);
+					q.push(0);
+					q.push(0);
 				}
 				if (btn)  cout << btn->key;
-				else      cout << " ";
-				for (l = 0; l < in_between_skip; l++) putchar(' ');
+				else      cout << "  ";
+				for (l = 0; l < in_between_skip; l++) cout<<"  ";
 			}
-			putchar('\n');
-			putchar('\n');
+			cout << "\n";
+			cout << "\n";
 		}
 	}
 }
