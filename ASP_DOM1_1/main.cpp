@@ -282,7 +282,7 @@ void printTree(struct TreeNode* root) {
 			int j = 1 << i, k, l;
 			in_between_skip = first_skip;
 			first_skip = (first_skip - 2) / 2;
-			for (k = 0; k < first_skip; k++) cout << "  ";
+			for (k = 0; k < first_skip; k++) cout << " ";
 			for (k = 0; k < j; k++) {
 				struct TreeNode* btn = q.front();
 				q.pop();
@@ -295,8 +295,8 @@ void printTree(struct TreeNode* root) {
 					q.push(0);
 				}
 				if (btn)  cout << btn->key;
-				else      cout << "  ";
-				for (l = 0; l < in_between_skip; l++) cout<<"  ";
+				else      cout << "	";
+				for (l = 0; l < in_between_skip; l++) cout << " ";
 			}
 			cout << "\n";
 			cout << "\n";
