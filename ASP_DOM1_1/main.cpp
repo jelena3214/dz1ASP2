@@ -377,6 +377,31 @@ struct TreeNode* data(struct TreeNode* root) {
 	return root;
 }
 
+void printChildren(struct TreeNode* root) {
+	stack<struct TreeNode*> chi;
+	chi.push(root);
+	while (!chi.empty()) {
+		struct TreeNode* tmp = chi.top();
+		chi.pop();
+		cout << tmp->key << endl;
+		if (tmp->left) {
+			chi.push(tmp->left);
+			cout << tmp->left->key << " ";
+		}
+		else {
+			cout << " / ";
+		}
+		if (tmp->right) {
+			chi.push(tmp->right);
+			cout << tmp->right->key << endl;
+		}
+		else {
+			cout << " / \n";
+		}
+
+	}
+}
+
 int main() {
 	string meni = "Unesite neku od opcija:\n"
 		"1. Formiranje stabla\n"
@@ -397,7 +422,7 @@ int main() {
 		cin >> choice;
 		string word, k , input;
 		vector<string> t;
-		int way;
+		int way, r;
 		
 		if (choice == 1) {
 			cout << "Datoteka - 1, std - 0";
@@ -441,7 +466,14 @@ int main() {
 			root = nullptr;
 		}
 		if (choice == 6) {
-			printTree(root);
+			cout << "Printanje celog stabla - 0, samo deca - 1" << endl;
+			cin >> r;
+			if (!r) {
+				printTree(root);
+			}
+			else {
+				printChildren(root);
+			}
 		}
 		if (choice == 7) {
 			inorder(root, all_keys);
