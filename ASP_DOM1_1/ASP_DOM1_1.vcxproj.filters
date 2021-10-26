@@ -19,4 +19,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\..\OneDrive - student.etf.bg.ac.rs\Desktop\in.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="t.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

@@ -3,11 +3,11 @@
 #include <vector>
 #include <stack>
 #include <queue>
-
+#include <fstream>
+#include <sstream>
 
 using namespace std;
-//proveri brisanje sa stekom
-//odredjivanje reci sa najvecim brojem raz prevoda, ubacivanje 3 ista kljuca?
+
 struct TreeNode {
 	string key;
 	vector<string> translation;
@@ -55,6 +55,11 @@ struct TreeNode* bst_insert(struct TreeNode* root, struct TreeNode* newnode) {
 		par = tmp;
 		if (newnode->key == tmp->key) {
 			struct TreeNode* succ = bst_succ(tmp);
+			if (!succ) {
+				tmp->right = newnode;
+				newnode->parent = tmp;
+				return root;
+			}
 			struct TreeNode* parsucc = succ->parent;
 			if (!parsucc && tmp->right == nullptr) {
 				tmp->right = newnode;
@@ -219,6 +224,7 @@ void find_all_keys(struct TreeNode* root, string key) {
 			cout << find->translation[i] << " ";
 		}
 		p = bst_succ(find);
+		if (!p) return;
 		if (p->key != key)return;
 	}
 }
@@ -274,14 +280,14 @@ void printTree(struct TreeNode* root) {
 	if (root == nullptr)  return;
 	else {
 		queue<struct TreeNode*> q;
-		int i, line_len = 62;
-		int first_skip = line_len, in_between_skip;
+		int i, line_len = 82;
+		int first_skip = line_len, in_between_skip, tmp = root->key.length();
 
 		q.push(root);
 		for (i = 0; i <= treeHeight(root); i++) {
 			int j = 1 << i, k, l;
 			in_between_skip = first_skip;
-			first_skip = (first_skip - 2) / 2;
+			first_skip = (first_skip - tmp) / 2;
 			for (k = 0; k < first_skip; k++) cout << " ";
 			for (k = 0; k < j; k++) {
 				struct TreeNode* btn = q.front();
@@ -294,8 +300,14 @@ void printTree(struct TreeNode* root) {
 					q.push(0);
 					q.push(0);
 				}
-				if (btn)  cout << btn->key;
-				else      cout << "	";
+				if (btn) {
+					cout << btn->key;
+					tmp = btn->key.length();
+				}
+				else {
+					cout << " ";
+					tmp = 0;
+				}
 				for (l = 0; l < in_between_skip; l++) cout << " ";
 			}
 			cout << "\n";
@@ -342,6 +354,29 @@ string max_trans(struct TreeNode* root, vector<string> keys) {
 	return max;
 }
 
+struct TreeNode* data(struct TreeNode* root) {
+	ifstream MyReadFile;
+	MyReadFile.open("t.txt");
+
+	string key, line;
+	vector<string> translations;
+	struct TreeNode* node;
+	
+	while (getline(MyReadFile, key)) {
+		getline(MyReadFile, line);
+		stringstream ss(line);
+		string word;
+		while (ss >> word) {
+			translations.push_back(word);
+		}
+		node = create_tree_node(key, translations);
+		root = bst_insert(root, node);
+	}
+
+	MyReadFile.close();
+	return root;
+}
+
 int main() {
 	string meni = "Unesite neku od opcija:\n"
 		"1. Formiranje stabla\n"
@@ -362,14 +397,20 @@ int main() {
 		cin >> choice;
 		string word, k , input;
 		vector<string> t;
+		int way;
 		
 		if (choice == 1) {
-			root = create_tree(root);
+			cout << "Datoteka - 1, std - 0";
+			cin >> way;
+			if(way == 0) { root = create_tree(root); }
+			else { root = data(root); }
+			
 		}
 		if (choice == 2) {
 			cout << "Unesite kljuc: ";
 			cin >> word;
 			find_all_keys(root, word);
+			cout << endl;
 		}
 		if (choice == 3) {
 			cout << "Unesite kljuc ";
@@ -396,7 +437,7 @@ int main() {
 			root = delete_all_same_keys(root, word);
 		}
 		if (choice == 5) {
-			stack_test(root);
+			delete_bst(root);
 			root = nullptr;
 		}
 		if (choice == 6) {
@@ -412,7 +453,7 @@ int main() {
 				//cout << (*all_keys)[i] << " ";
 			//}
 
-			cout << max_trans(root, *all_keys);
+			cout << max_trans(root, *all_keys) << endl;
 
 			all_keys->clear();
 		}
